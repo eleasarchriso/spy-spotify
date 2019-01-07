@@ -14,7 +14,6 @@ namespace EspionSpotify.MediaTags
 
         public async Task SaveMediaTags()
         {
-            var api = new LastFMAPI();
             var mp3 = TagLib.File.Create(CurrentFile);
 
             if (OrderNumberInMediaTagEnabled && Count.HasValue)
@@ -33,6 +32,10 @@ namespace EspionSpotify.MediaTags
 
             mp3.Tag.Album = Track.Album;
             mp3.Tag.Genres = Track.Genres;
+            mp3.Tag.Performers = Track.Performers;
+            mp3.Tag.Disc = Track.Disc;
+            mp3.Tag.AlbumArtists = Track.AlbumArtists;
+            mp3.Tag.Year = Track.Year;
 
             if (File.Exists(CurrentFile))
             {

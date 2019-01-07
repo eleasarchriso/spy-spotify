@@ -1,6 +1,7 @@
 ﻿using EspionSpotify.Models;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
@@ -9,13 +10,11 @@ using TagLib;
 
 namespace EspionSpotify.MediaTags
 {
-    public class LastFMAPI: ILastFMAPI
+    public class LastFMAPI : IExternalAPI
     {
         private const string _apiDomain = "http://ws.audioscrobbler.com/2.0/?method=track.getInfo";
         private readonly string[] _apiKey;
         private readonly Random _random;
-
-        public LastFMTrack TrackInfo { get; set; }
         
         private string ApiUrl(string apiKey, string artist, string title) => $"{_apiDomain }&api_key={apiKey}&artist={artist}&track={title}";
 
@@ -25,11 +24,9 @@ namespace EspionSpotify.MediaTags
             _apiKey = new[] { "c117eb33c9d44d34734dfdcafa7a162d", "01a049d30c4e17c1586707acf5d0fb17", "82eb5ead8c6ece5c162b461615495b18" };
         }
 
-        public LastFMTrack GetTagInfo(Track track)
+        public void UpdateInfo(Track track)
         {
-            if (!track.IsNormal()) return null;
-
-            TrackInfo = new LastFMTrack();
+            if (!track.IsNormal()) return;
 
             var api = new XmlDocument();
             var artist = PCLWebUtility.WebUtility.UrlEncode(track.Artist);
@@ -43,21 +40,28 @@ namespace EspionSpotify.MediaTags
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return null;
+                return;
             }
 
             var apiReturn = api.DocumentElement;
 
             if (apiReturn == null)
             {
-                return null;   
+                return;   
             }
 
             var serializer = new XmlSerializer(typeof(LastFMTrack));
             var node = apiReturn.SelectSingleNode("/lfm/track");
-            TrackInfo = serializer.Deserialize(new XmlNodeReader(node)) as LastFMTrack;
+            var trackExtra = serializer.Deserialize(new XmlNodeReader(node)) as LastFMTrack;
 
-            return TrackInfo;
+            track.Album = trackExtra.Album?.AlbumTitle;
+            track.AlbumPosition = trackExtra.Album?.TrackPosition;
+            track.Genres = trackExtra.Toptags?.Tag?.Select(x => x.Name).ToArray();
+            track.Length = trackExtra.Duration / 1000;
+            track.ArtExtraLargeUrl = trackExtra.Album?.ExtraLargeCoverUrl;
+            track.ArtLargeUrl = trackExtra.Album?.LargeCoverUrl;
+            track.ArtMediumUrl = trackExtra.Album?.MediumCoverUrl;
+            track.ArtSmallUrl = trackExtra.Album?.SmallCoverUrl;
         }
     }
 }

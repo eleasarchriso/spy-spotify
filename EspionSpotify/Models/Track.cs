@@ -31,6 +31,10 @@ namespace EspionSpotify.Models
         public byte[] ArtLarge { get; set; }
         public byte[] ArtMedium { get; set; }
         public byte[] ArtSmall { get; set; }
+        public string[] Performers { get; internal set; }
+        public uint Disc { get; internal set; }
+        public string[] AlbumArtists { get; internal set; }
+        public uint Year { get; internal set; }
 
         public bool IsNormal() => Artist != null && Title != null && !Ad && Playing;
 

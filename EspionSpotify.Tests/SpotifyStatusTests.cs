@@ -1,4 +1,5 @@
-﻿using EspionSpotify.Models;
+﻿using EspionSpotify.MediaTags;
+using EspionSpotify.Models;
 using EspionSpotify.Spotify;
 using System;
 using System.Collections.Generic;

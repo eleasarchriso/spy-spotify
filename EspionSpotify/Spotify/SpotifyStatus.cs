@@ -20,21 +20,7 @@ namespace EspionSpotify.Spotify
 
         public Track GetTrack()
         {
-            var api = new LastFMAPI();
-            var trackExtra = api.GetTagInfo(Track);
-
-            if (trackExtra != null)
-            {
-                Track.Album = trackExtra.Album?.AlbumTitle;
-                Track.AlbumPosition = trackExtra.Album?.TrackPosition;
-                Track.Genres = trackExtra.Toptags?.Tag?.Select(x => x.Name).ToArray();
-                Track.Length = trackExtra.Duration / 1000;
-                Track.ArtExtraLargeUrl = trackExtra.Album?.ExtraLargeCoverUrl;
-                Track.ArtLargeUrl = trackExtra.Album?.LargeCoverUrl;
-                Track.ArtMediumUrl = trackExtra.Album?.MediumCoverUrl;
-                Track.ArtSmallUrl = trackExtra.Album?.SmallCoverUrl;
-            }
-
+            ExternalApi.Instance.UpdateInfo(Track);
             return Track;
         }
 

@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using EspionSpotify.Extensions;
+using EspionSpotify.MediaTags;
 
 namespace EspionSpotify
 {
@@ -106,6 +107,12 @@ namespace EspionSpotify
             ResumeLayout();
 
             GitHub.GetVersion();
+
+            if (!string.IsNullOrEmpty(Settings.Default.SpotifyClientId) &&
+                !string.IsNullOrEmpty(Settings.Default.SpotifyClientSecret))
+            {
+                ExternalApi.Instance = new SpotifyApi(Settings.Default.SpotifyClientId, Settings.Default.SpotifyClientSecret);
+            }
         }
 
         private void SetLanguageDropDown()

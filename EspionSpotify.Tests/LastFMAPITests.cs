@@ -20,10 +20,9 @@ namespace EspionSpotify.Tests
 
             var api = new LastFMAPI();
 
-            var lastFMTrack = api.GetTagInfo(spotifyTrack);
+            api.UpdateInfo(spotifyTrack);
 
-            Assert.NotNull(lastFMTrack);
-            Assert.Equal(lastFMTrack, api.TrackInfo);
+            Assert.NotNull(spotifyTrack.Length);
         }
     }
 }
